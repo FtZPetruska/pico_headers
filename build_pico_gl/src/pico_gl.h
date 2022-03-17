@@ -948,7 +948,7 @@ void pgl_set_s2d(pgl_shader_t* shader, const char* name, int32_t value);
 }
 #endif
 
-#ifdef  PGL_IMPLEMENTATION
+#ifdef PICO_GL_IMPLEMENTATION
 
 #include "glad.h"
 
@@ -2668,7 +2668,7 @@ static pgl_hash_t pgl_hash_str(const char* str)
     #pragma GCC diagnostic pop
 #endif // __GNUC__
 
-#endif // PGL_IMPLEMENTATION
+#endif // PICO_GL_IMPLEMENTATION
 
 /*
     ----------------------------------------------------------------------------

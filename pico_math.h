@@ -785,7 +785,7 @@ pm_flt pm_random_float(pm_rng_t* rng);
 
 #endif // PICO_MATH_H
 
-#ifdef PM_IMPLEMENTATION
+#ifdef PICO_MATH_IMPLEMENTATION
 
 
 pm_flt pm_lerp_angle(pm_flt angle1, pm_flt angle2, pm_flt alpha)
@@ -1082,7 +1082,7 @@ pm_flt pm_random_float(pm_rng_t* rng)
 }
 
 
-#endif // PM_IMPLEMENTATION
+#endif // PICO_MATH_IMPLEMENTATION
 
 /*
     ----------------------------------------------------------------------------

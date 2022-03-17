@@ -186,11 +186,11 @@ void pu_run_suite(const char* const name, pu_suite_fn suite_fp);
 
 #endif // PICO_UNIT_H
 
-#ifdef PU_IMPLEMENTATION
+#ifdef PICO_UNIT_IMPLEMENTATION
 
 #include <stdio.h> /* printf */
 
-#ifndef PU_NO_CLOCK
+#ifndef PICO_UNIT_NO_CLOCK
 #include <time.h>  /* clock_t, clock */
 #endif // PU_NO_CLOCK
 
@@ -389,7 +389,7 @@ pu_print_stats (void)
 }
 
 
-#endif // PU_IMPLEMENTATION
+#endif // PICO_UNIT_IMPLEMENTATION
 
 /*
     ----------------------------------------------------------------------------

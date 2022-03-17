@@ -59,8 +59,8 @@
     Constants:
     --------
 
-    - PL_MAX_APPENDERS (default: 16)
-    - PL_MAX_MSG_LENGTH (default: 1024)
+    - PICO_LOG_MAX_APPENDERS (default: 16)
+    - PICO_LOG_MAX_MSG_LENGTH (default: 1024)
 
     Must be defined before PL_IMPLEMENTATION
 */
@@ -68,7 +68,7 @@
 #ifndef PICO_LOG_H
 #define PICO_LOG_H
 
-#ifndef PL_ASSERT
+#ifndef PICO_LOG_ASSERT
 #include <assert.h>  // assert
 #endif
 
@@ -328,7 +328,7 @@ void pl_write(pl_level_t level,
 
 #endif // PICO_LOG_H
 
-#ifdef PL_IMPLEMENTATION
+#ifdef PICO_LOG_IMPLEMENTATION
 
 #include <time.h>
 #include <string.h>
@@ -336,16 +336,16 @@ void pl_write(pl_level_t level,
 /*
  * Configuration constants/macros.
  */
-#ifndef PL_MAX_APPENDERS
-#define PL_MAX_APPENDERS 16
+#ifndef PICO_LOG_MAX_APPENDERS
+#define PICO_LOG_MAX_APPENDERS 16
 #endif
 
-#ifndef PL_MAX_MSG_LENGTH
-#define PL_MAX_MSG_LENGTH 1024
+#ifndef PICO_LOG_MAX_MSG_LENGTH
+#define PICO_LOG_MAX_MSG_LENGTH 1024
 #endif
 
-#ifndef PL_ASSERT
-#define PL_ASSERT(expr) assert(expr)
+#ifndef PICO_LOG_ASSERT
+#define PICO_LOG_ASSERT(expr) assert(expr)
 #endif
 
 /*
@@ -357,7 +357,7 @@ void pl_write(pl_level_t level,
 #define PL_LEVEL_LEN     32
 #define PL_FILE_LEN      512
 #define PL_FUNC_LEN      32
-#define PL_MSG_LEN       PL_MAX_MSG_LENGTH
+#define PL_MSG_LEN       PICO_LOG_MAX_MSG_LENGTH
 #define PL_BREAK_LEN     1
 
 #define PL_ENTRY_LEN (PL_TIMESTAMP_LEN  + \
@@ -434,7 +434,7 @@ typedef struct
 /*
  * Array of appenders.
  */
-static pl_appender_t pl_appenders[PL_MAX_APPENDERS];
+static pl_appender_t pl_appenders[PICO_LOG_MAX_APPENDERS];
 
 /*
  * Initializes the logger provided it has not been initialized.
@@ -447,7 +447,7 @@ pl_try_init ()
         return;
     }
 
-    for (int i = 0; i < PL_MAX_APPENDERS; i++)
+    for (int i = 0; i < PICO_LOG_MAX_APPENDERS; i++)
     {
         pl_appenders[i].appender_fp = NULL;
     }
@@ -457,7 +457,7 @@ pl_try_init ()
 
 static bool pl_appender_exists(pl_id_t id)
 {
-    return (id < PL_MAX_APPENDERS && NULL != pl_appenders[id].appender_fp);
+    return (id < PICO_LOG_MAX_APPENDERS && NULL != pl_appenders[id].appender_fp);
 }
 
 static bool pl_appender_enabled(pl_id_t id)
@@ -501,13 +501,13 @@ pl_add_appender (pl_appender_fn appender_fp, pl_level_t level, void* udata)
     pl_try_init();
 
     // Check if there is space for a new appender.
-    PL_ASSERT(pl_appender_count < PL_MAX_APPENDERS);
+    PICO_LOG_ASSERT(pl_appender_count < PICO_LOG_MAX_APPENDERS);
 
     // Ensure level is valid
-    PL_ASSERT(level >= 0 && level < PL_LEVEL_COUNT);
+    PICO_LOG_ASSERT(level >= 0 && level < PL_LEVEL_COUNT);
 
     // Iterate through appender array and find an empty slot.
-    for (int i = 0; i < PL_MAX_APPENDERS; i++)
+    for (int i = 0; i < PICO_LOG_MAX_APPENDERS; i++)
     {
         if (NULL == pl_appenders[i].appender_fp)
         {
@@ -536,7 +536,7 @@ pl_add_appender (pl_appender_fn appender_fp, pl_level_t level, void* udata)
     }
 
     // This should never happen
-    PL_ASSERT(false);
+    PICO_LOG_ASSERT(false);
     return 0;
 }
 
@@ -552,7 +552,7 @@ pl_id_t
 pl_add_stream (FILE* stream, pl_level_t level)
 {
     // Stream must not be NULL
-    PL_ASSERT(NULL != stream);
+    PICO_LOG_ASSERT(NULL != stream);
 
     return pl_add_appender(pl_stream_appender, level, stream);
 }
@@ -564,7 +564,7 @@ pl_remove_appender (pl_id_t id)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Reset appender with given ID
     pl_appenders[id].appender_fp = NULL;
@@ -579,7 +579,7 @@ pl_enable_appender (pl_id_t id)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Enable appender
     pl_appenders[id].enabled = true;
@@ -592,7 +592,7 @@ pl_disable_appender (pl_id_t id)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Disable appender
     pl_appenders[id].enabled = false;
@@ -601,13 +601,13 @@ pl_disable_appender (pl_id_t id)
 void pl_set_lock(pl_id_t id, pl_lock_fn lock_fp, void* udata)
 {
     // Ensure lock function is initialized
-    PL_ASSERT(NULL != lock_fp);
+    PICO_LOG_ASSERT(NULL != lock_fp);
 
     // Ensure appender is registered
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     pl_appenders[id].lock_fp = lock_fp;
     pl_appenders[id].lock_udata = udata;
@@ -620,10 +620,10 @@ pl_set_level (pl_id_t id, pl_level_t level)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Ensure level is valid
-    PL_ASSERT(level >= 0 && level < PL_LEVEL_COUNT);
+    PICO_LOG_ASSERT(level >= 0 && level < PL_LEVEL_COUNT);
 
     // Set the level
     pl_appenders[id].log_level = level;
@@ -636,7 +636,7 @@ pl_set_time_fmt (pl_id_t id, const char* fmt)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Copy the time string
     strncpy(pl_appenders[id].time_fmt, fmt, PL_TIME_FMT_LEN);
@@ -649,7 +649,7 @@ pl_display_colors (pl_id_t id, bool enabled)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Disable appender
     pl_appenders[id].colors = enabled;
@@ -662,7 +662,7 @@ pl_display_timestamp (pl_id_t id, bool enabled)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Turn timestamp on
     pl_appenders[id].timestamp = enabled;
@@ -675,7 +675,7 @@ pl_display_level (pl_id_t id, bool enabled)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Turn level reporting on
     pl_appenders[id].level = enabled;
@@ -688,7 +688,7 @@ pl_display_file (pl_id_t id, bool enabled)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Turn file reporting on
     pl_appenders[id].file = enabled;
@@ -701,7 +701,7 @@ pl_display_function (pl_id_t id, bool enabled)
     pl_try_init();
 
     // Ensure appender is registered
-    PL_ASSERT(pl_appender_exists(id));
+    PICO_LOG_ASSERT(pl_appender_exists(id));
 
     // Turn file reporting on
     pl_appenders[id].func = enabled;
@@ -716,7 +716,7 @@ pl_time_str (const char* time_fmt, char* str, int len)
     time_t now = time(0);
     int ret = strftime(str, len, time_fmt, localtime(&now));
 
-    PL_ASSERT(ret > 0);
+    PICO_LOG_ASSERT(ret > 0);
 
     return str;
 }
@@ -793,9 +793,9 @@ pl_write (pl_level_t level, const char* file, unsigned line,
     }
 
     // Ensure valid log level
-    PL_ASSERT(level < PL_LEVEL_COUNT);
+    PICO_LOG_ASSERT(level < PL_LEVEL_COUNT);
 
-    for (pl_id_t i = 0; i < PL_MAX_APPENDERS; i++)
+    for (pl_id_t i = 0; i < PICO_LOG_MAX_APPENDERS; i++)
     {
         pl_appender_t* appender = &pl_appenders[i];
 
@@ -861,7 +861,7 @@ pl_write (pl_level_t level, const char* file, unsigned line,
     }
 }
 
-#endif // PL_IMPLEMENTATION
+#endif // PICO_LOG_IMPLEMENTATION
 
 
 /*
