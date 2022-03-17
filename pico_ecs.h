@@ -49,7 +49,7 @@
 
     To use this library in your project, add the following
 
-    > #define ECS_IMPLEMENTATION
+    > #define PICO_ECS_IMPLEMENTATION
     > #include "pico_ecs.h"
 
     to a source file (once), then simply include the header normally.
@@ -57,11 +57,11 @@
     Constants:
     --------
 
-    - ECS_MAX_COMPONENTS (default: 32)
-    - ECS_MAX_ENTITIES (default: 8*1024)
-    - ECS_MAX_SYSTEMS (default: 16)
+    - PICO_ECS_MAX_COMPONENTS (default: 32)
+    - PICO_ECS_MAX_ENTITIES (default: 8*1024)
+    - PICO_ECS_MAX_SYSTEMS (default: 16)
 
-    Must be defined before ECS_IMPLEMENTATION
+    Must be defined before PICO_ECS_IMPLEMENTATION
 
     Todo:
     -----
@@ -500,7 +500,6 @@ static bool ecs_is_entity_ready(ecs_t* ecs, ecs_id_t entity_id);
 static bool ecs_is_component_ready(ecs_t* ecs, ecs_id_t comp_id);
 static bool ecs_is_system_ready(ecs_t* ecs, ecs_id_t sys_id);
 #endif // PICO_ECS_DEBUG
-
 /*=============================================================================
  * Public API implementation
  *============================================================================*/
